@@ -78,12 +78,10 @@ def load_oil_data(file, rename_maps, marker, map_lambdas={}):
     print('load %s' % file)
     df = pd.read_csv(file)
     df = df.rename(index=str, columns=rename_maps)
-    # df['company_size'] = df.apply(lambda row: int(re.findall(r'\d+', row['company_size'])[-1]) or 100, axis=1)
-    # df['experience'] = df.apply(lambda row: float(re.findall(r'[\d.]+', row['experience'])[-1]) or 1, axis=1)
-    # df['skills'] = df.apply(get_skills, axis=1)
     df['marker'] = marker
     for key, cb in map_lambdas.items():
         df[key] = df.apply(cb, axis=1)
+    df['date'] = pd.to_datetime(df['date'], errors='coerce')
     df = df[REQUIRED_OIL_FIELDS]
     df = df[df.apply(row_filter, axis=1)]
     db.insert_many(df.to_dict('records'))
@@ -97,4 +95,18 @@ if __name__ == '__main__':
                   'Price': 'price',
               },
               marker='Brent'
+              )
+    load_oil_data(file='./csv-initial-data/wti-daily.csv',
+              rename_maps={
+                  'Date': 'date',
+                  'Price': 'price',
+              },
+              marker='WTI'
+              )
+    load_oil_data(file='./csv-initial-data/mars-monthly.csv',
+              rename_maps={
+                  'Date': 'date',
+                  'Price': 'price',
+              },
+              marker='Mars US'
               )
