@@ -12,7 +12,7 @@ fake.add_provider(faker.providers.date_time)
 REQUIRED_FIELDS = ['city', 'skills', 'experience', 'language', 'position', 'education', 'salary', 'company_size',
                    'publication_date']
 
-REQUIRED_OIL_FIELDS = ['date', 'price', 'marker']
+REQUIRED_OIL_FIELDS = ['date', 'price', 'marker', 'change']
 
 def convert_2011_salary(row):
     if row['Валюта'] == 'h':
@@ -82,6 +82,9 @@ def load_oil_data(file, rename_maps, marker, map_lambdas={}):
     for key, cb in map_lambdas.items():
         df[key] = df.apply(cb, axis=1)
     df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df['change'] = df['price'].pct_change()
+    df = df.dropna()
+
     df = df[REQUIRED_OIL_FIELDS]
     df = df[df.apply(row_filter, axis=1)]
     db.insert_many(df.to_dict('records'))

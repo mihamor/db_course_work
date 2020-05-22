@@ -12,6 +12,8 @@ pandas = "*"
 matplotlib = "*"
 jupyter = "*"
 scipy = "*"
+numpy = "*"
+statsmodels = "*"
 
 [requires]
 python_version = "3.7"
