@@ -11,7 +11,7 @@ db.createUser({
     db: '$DB'
   }]
 })
-db.cwdb.createIndex({ publication_date:"hashed"})
+db.cwdb.createIndex({ date:"hashed"})
 sh.enableSharding('$DB')
-sh.shardCollection( "$DB.cwdb", { publication_date:"hashed" })
+sh.shardCollection( "$DB.cwdb", { date:"hashed" })
 EOF
